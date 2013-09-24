@@ -1,0 +1,14 @@
+{
+    "name": "phly/phpblnl13-status-api",
+    "minimum-stability": "dev"
+    "require": {
+        "phly/phly-restfully": "dev-master",
+        "phly/phly-simple-page": "dev-master",
+        "zend/zend-db": ">=2.1.0",
+        "zend/zend-eventmanager": ">=2.1.0",
+        "zend/math": ">=2.1.0",
+        "zend/zend-paginator": ">=2.1.0",
+        "zend/zend-servicemanager": ">=2.1.0",
+        "zend/zend-stdlib": ">=2.1.0"
+    }
+}
