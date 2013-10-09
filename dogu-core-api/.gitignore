@@ -6,4 +6,6 @@ nbproject
 .idea
 .project
 .settings
-data/cache/
+composer.phar
+composer.lock
+vendor/bin

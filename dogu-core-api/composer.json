@@ -1,31 +1,15 @@
 {
-    "name": "phpbnl13/zf2-restful-apis",
-    "description": "Sample application demonstrating RESTful APIs built with ZF2.",
-    "license": "BSD-2-Clause",
+    "name": "zendframework/skeleton-application",
+    "description": "Skeleton Application for ZF2",
+    "license": "BSD-3-Clause",
     "keywords": [
         "framework",
         "zf2"
     ],
-    "authors": [
-        {
-            "name": "Rob Allen",
-            "email": "rob@akrabat.com",
-            "homepage": "http://akrabat.com",
-            "role": "Developer"
-        },
-        {
-            "name": "Matthew Weier O'Phinney",
-            "email": "matthew@weierophinney.net",
-            "homepage": "http://www.mwop.net",
-            "role": "Developer"
-        }
-    ],
-    "homepage": "http://conference.phpbenelux.eu/2013/sessions/",
-    "minimum-stability": "dev",
+    "homepage": "http://framework.zend.com/",
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zendframework": "2.1.*",
-        "phly/phly-restfully": "dev-master@dev",
-        "phly/phly-simple-page": "dev-master@dev"
+        "zendframework/zendframework": "2.2.*",
+        "phpunit/phpunit": "*"
     }
 }

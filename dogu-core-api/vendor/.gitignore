@@ -1,5 +1,7 @@
-bin/
-composer/
-phly/
-zendframework/
+!.gitignore
+.composer
+composer
+phpunit
+symfony
+zendframework
 autoload.php

@@ -12,19 +12,5 @@
  */
 
 return array(
-    'phpbnl13_status_api' => array(
-        'page_size' => 3,
-    ),
-    'db' => array(
-        'driver'   => 'Pdo_Sqlite',
-        'database' => realpath(getcwd()) . '/data/status.db',
-    ),
-    'service_manager' => array(
-        'factories' => array(
-            'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
-        ),
-    ),
-    'view_manager' => array(
-        'display_exceptions' => false, // set to true in a local file in order to debug
-    ),
+    // ...
 );
