@@ -75,7 +75,16 @@ class Module
                     $description = 'The requested controller was not dispatchable.';
                     break;
                 case APPLICATION::ERROR_ROUTER_NO_MATCH:
-                    $description = 'The requested URL could not be matched by routing.';
+                    $app      = $e->getTarget();
+                    $locator  = $app->getServiceManager();
+                    $request  = $e->getRequest();
+                    $router   = $locator->get('router');
+                    $routes = array();
+                    foreach ($router->getRoutes() as $routeName => $route) {
+                        $routes[$routeName] = $route;
+                    }
+                    $description = 'The requested URL "' . $request->getUri()->getPath()
+                        . '" could not be matched by routing. Tested routes: ' . implode(', ', array_keys($routes));
                     break;
                 case APPLICATION::ERROR_EXCEPTION:
                     $description = $currentModel->message;
