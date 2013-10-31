@@ -1,9 +1,0 @@
-<?php
-header('HTTP/1.0 500 Internal Server Error');
-header('Content-Type: application/json');
-echo json_encode(array(
-  'status' => 'error',
-  'message' => trim($this->content),
-  'description' => '',
-  'stacktrace' => ''
-));

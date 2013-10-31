@@ -14,6 +14,8 @@ class VCloudInspectorApiController extends AbstractRestfulController
 
     public function getList()
     {
+        die('getList OK');
+
         //$viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
         $viewModel = new JsonModel();
 
