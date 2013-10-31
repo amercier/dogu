@@ -14,10 +14,7 @@ class VCloudInspectorApiController extends AbstractRestfulController
 
     public function getList()
     {
-        die('getList OK');
-
-        //$viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
-        $viewModel = new JsonModel();
+        $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
 
         try {
             // $hostname = 'mongo.local';
@@ -25,9 +22,33 @@ class VCloudInspectorApiController extends AbstractRestfulController
 
             $mongoClient = new \MongoClient('mongodb://' . $hostname);
             $mongoDB = $mongoClient->selectDB('vCloudNG');
-            $collection = $mongoDB->selectCollection('queries');
+            $collection = $mongoDB->selectCollection('objects');
 
             $objects = array();
+            $counts = array();
+
+            foreach ($collection->find(array(), array("_id" => true, "value" => true)) as $object) {
+
+                $uuid = join('-', array(
+                    $object['_id']['host'],
+                    $object['_id']['queryType'],
+                    $object['_id']['object'],
+                ));
+
+                $type = $object['_id']['queryType'];
+
+                $objects[$uuid] = $object['_id'];
+                if (array_key_exists('name', $object['value'])) {
+                    $objects[$uuid]['name'] = $object['value']['name']['current'];
+                }
+
+                if (array_key_exists($type, $counts)) {
+                    $counts[$type]++;
+                }
+                else {
+                    $counts[$type] = 1;
+                }
+            }
 
             /*
             foreach (array('ADMIN_VM' => 'vm') as $collectionName => $type) {
@@ -62,11 +83,45 @@ class VCloudInspectorApiController extends AbstractRestfulController
             $viewModel->message = 'Successfully retrieved items';
             $viewModel->data = array(
                 'types' => array(
-                    "vm" => "Virtual Machines",
-                    "vApp" => "vApps",
-                    "vAppTemplate" => "vApp Templates",
-                    "org" => "Organizations",
+                    'adminVAppNetwork' => 'vApp Networks',
+                    'vAppOrgNetworkRelation' => 'vApp Org Newtork Relations',
+                    'adminVApp' => 'vApps',
+                    'vAppOrgVdcNetworkRelation' => 'vApp OrgVdc Network Relations',
+                    'adminVM' => 'Virtual Machines',
+                    'adminCatalogItem' => 'Catalog Items (admin)',
+                    'adminVAppTemplate' => 'vApp Templates',
+                    'edgeGateway' => 'Edge Gateways',
+                    'adminMedia' => 'Medias',
+                    'resourcePoolVmList' => 'Resource Pool VM Lists',
+                    'adminOrgNetwork' => 'Org Networks',
+                    'orgVdcNetwork' => 'Org vDC Networks',
+                    'adminUser' => 'Users (admin)',
+                    'adminOrgVdcStorageProfile' => 'Org vDC Storage Profiles',
+                    'user' => 'Users',
+                    'catalogItem' => 'Catalog Items',
+                    'organization' => 'Organizations',
+                    'right' => 'Rights',
+                    'media' => 'Medias',
+                    'vAppTemplate' => 'vApp Templates (admins)',
+                    'adminGroup' => '',
+                    'group' => '',
+                    'adminCatalog' => '',
+                    'catalog' => '',
+                    'adminOrgVdc' => '',
+                    'host' => '',
+                    'externalNetwork' => '',
+                    'role' => '',
+                    'adminService' => '',
+                    'service' => '',
+                    'strandedItem' => '',
+                    'datastore' => '',
+                    'adminDisk' => '',
+                    'providerVdcStorageProfile' => '',
+                    'virtualCenter' => '',
+                    'networkPool' => '',
+                    'providerVdc' => '',
                 ),
+                'counts' => $counts,
                 'objects' => $objects,
             );
         }
