@@ -14,7 +14,7 @@ return array(
                 'options' => array(
                     'route' => '/vcloud-inspector[/:id]',
                     'constraints' => array(
-                        'id' => '[0-9]+',
+                        'id' => '[0-9a-zA-Z-_\.]+',
                     ),
                     'defaults' => array(
                         'controller' => 'VCloudInspectorApi\Controller\VCloudInspectorApi',
