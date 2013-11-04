@@ -6,6 +6,8 @@ use Zend\View\Model\JsonModel;
 
 class VCloudInspectorApiController extends AbstractRestfulController
 {
+    const UUID_PATTERN = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+
     protected $acceptCriteria = array(
         'Zend\View\Model\JsonModel' => array(
             'application/json',
@@ -50,35 +52,6 @@ class VCloudInspectorApiController extends AbstractRestfulController
                 }
             }
 
-            /*
-            foreach (array('ADMIN_VM' => 'vm') as $collectionName => $type) {
-
-                $objects[$type] = array();
-                foreach ($db->$collectionName->find() as $document) {
-
-                    die(print_r($document, true));
-
-                    $id = preg_replace(
-                        '/^.*[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/',
-                        '$1',
-                        $document['get_href']
-                    );
-                    $name = $document['get_name'];
-
-                    die(print_r($document));
-
-                    if (array_key_exists($id, $objects[$type])) {
-                        $objects[$type][$id]['name'] = $name;
-                        $objects[$type][$id]['names'][] = $name;
-                    } else {
-                        $objects[$type][$id] = array(
-                            'name' => $name,
-                            'names' => array($name),
-                        );
-                    }
-                }
-            }*/
-
             $viewModel->status = 'success';
             $viewModel->message = 'Successfully retrieved items';
             $viewModel->data = array(
@@ -103,27 +76,73 @@ class VCloudInspectorApiController extends AbstractRestfulController
                     'right' => 'Rights',
                     'media' => 'Medias',
                     'vAppTemplate' => 'vApp Templates (admins)',
-                    'adminGroup' => '',
-                    'group' => '',
-                    'adminCatalog' => '',
-                    'catalog' => '',
-                    'adminOrgVdc' => '',
-                    'host' => '',
-                    'externalNetwork' => '',
-                    'role' => '',
-                    'adminService' => '',
-                    'service' => '',
-                    'strandedItem' => '',
-                    'datastore' => '',
-                    'adminDisk' => '',
-                    'providerVdcStorageProfile' => '',
-                    'virtualCenter' => '',
-                    'networkPool' => '',
-                    'providerVdc' => '',
+                    'adminGroup' => 'Groups (admin)',
+                    'group' => 'Groups',
+                    'adminCatalog' => 'Catalogs',
+                    'catalog' => 'Catalogs (admin)',
+                    'adminOrgVdc' => 'Org vDCs (admin)',
+                    'host' => 'Hosts',
+                    'externalNetwork' => 'External Networks',
+                    'role' => 'Roles',
+                    'adminService' => 'Services (admin)',
+                    'service' => 'Services',
+                    'strandedItem' => 'Stranded Items',
+                    'datastore' => 'Datastores',
+                    'adminDisk' => 'Disks',
+                    'providerVdcStorageProfile' => 'vDC Storage Profiles',
+                    'virtualCenter' => 'vCenters',
+                    'networkPool' => 'Network Pools',
+                    'providerVdc' => 'Provider vDCs',
                 ),
                 'counts' => $counts,
                 'objects' => $objects,
             );
+        }
+        catch(\Exception $e) {
+            $viewModel->status = 'error';
+            $viewModel->message = 'Failed retrieving vCloud objects from ' . $hostname;
+            $viewModel->description = $e->getMessage();
+            $viewModel->stacktrace = $e->getTrace();
+        }
+
+        return $viewModel;
+    }
+
+    public function get($id)
+    {
+        $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
+
+        try {
+            // $hostname = 'mongo.local';
+            $hostname = '127.0.0.1';
+
+            $mongoClient = new \MongoClient('mongodb://' . $hostname);
+            $mongoDB = $mongoClient->selectDB('vCloudNG');
+            $collection = $mongoDB->selectCollection('objects');
+
+            if (!preg_match('/^(.*)-([^-]+)-(' . self::UUID_PATTERN . ')$/', $id, $matches)) {
+                throw new Exception("Invalid ID '$id'", 400);
+            }
+
+            $cursor = $collection->find(array(
+                '_id.host' => $matches[1],
+                '_id.queryType' => $matches[2],
+                '_id.object' => $matches[3],
+            ));
+
+            if (!$cursor->hasNext()) {
+                throw new Exception("Unknown object with ID '$id'");
+            }
+
+            $object = $cursor->getNext();
+
+            if ($cursor->hasNext()) {
+                throw new Exception("Found multiple objects with ID '$id'");
+            }
+
+            $viewModel->status = 'success';
+            $viewModel->message = 'Successfully retrieved item "' . $id . '"';
+            $viewModel->data = $object;
         }
         catch(\Exception $e) {
             $viewModel->status = 'error';
