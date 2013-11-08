@@ -158,10 +158,15 @@ class Module
         $response = $e->getResponse();
         $headers = $response->getHeaders();
         $contentType = $headers->get('Content-Type');
-        if (strpos($contentType->getFieldValue(), 'application/json') !== false
-            && strpos($response->getContent(), 'httpStatus')) {
-            // This is (almost certainly!) an api-problem
-            $headers->addHeaderLine('Content-Type', 'application/api-problem+json');
+        if ($contentType) {
+            if (strpos($contentType->getFieldValue(), 'application/json') !== false
+                && strpos($response->getContent(), 'httpStatus')) {
+                // This is (almost certainly!) an api-problem
+                $headers->addHeaderLine('Content-Type', 'application/api-problem+json');
+            }
         }
+
+        $headers->addHeaderLine('Access-Control-Allow-Origin','*');
+        $headers->addHeaderLine('Access-Control-Allow-Headers','X-Requested-With');
     }
 }

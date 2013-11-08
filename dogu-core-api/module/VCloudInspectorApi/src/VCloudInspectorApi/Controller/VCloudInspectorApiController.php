@@ -14,6 +14,11 @@ class VCloudInspectorApiController extends AbstractRestfulController
         ),
     );
 
+    public function options()
+    {
+        $this->getResponse()->getHeaders()->addHeaderLine('Access-Control-Allow-Methods','GET');
+    }
+
     public function getList()
     {
         $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
