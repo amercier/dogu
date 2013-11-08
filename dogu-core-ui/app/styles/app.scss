@@ -1,3 +1,40 @@
 .app {
   margin-top: 50px;
 }
+
+.app-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.app-loading-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: 0;
+  width: 10em;
+  margin-left: -5em;
+  margin-top: 0.5em;
+  text-align: center;
+}
+
+.app-loading-icon {
+  position: absolute;
+  left: 50%;
+  right: 0;
+  bottom: 50%;
+
+  &.icon-loading {
+    margin-left: -8px;
+  }
+}
+
+.icon-loading {
+  background: url(/images/loading.gif) no-repeat left top;
+  width: 16px;
+  height: 16px;
+}
