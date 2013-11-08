@@ -1,0 +1,8 @@
+<div ng-if="listError" class="alert alert-danger">
+  <strong>Oh no!</strong> Failed retrieving the vCloud objects from the server :(
+  <br>
+  <br>
+  {{listError.httpStatus}} {{listError.message}}
+  <br>
+  {{listError.description}}
+</div>

@@ -1,0 +1,61 @@
+$iconSpritePath: "../images/glyphicons-halflings.png";
+$iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
+
+@import "bootstrap-sass/lib/bootstrap";
+@import "app.scss";
+@import "tabs.scss";
+
+html, body {
+  margin: 10px;
+}
+
+body {
+    background: white;
+    font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    color: #333;
+}
+
+.navbar-brand {
+  font-weight: 700;
+}
+
+/*
+.application-title {
+  font-weight: 100;
+  font-size: 60px;
+}
+
+.application-nav {
+  width: 240px;
+  // top: 100px;
+}
+
+.application {
+  left: 260px;
+
+  &:before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 261px;
+    right: 20px;
+    height: 30px;
+    background: linear-gradient(white, transparent);
+  }
+
+  &:after {
+    content: '';
+    position: fixed;
+    bottom: 0;
+    left: 261px;
+    right: 20px;
+    height: 30px;
+    background: linear-gradient(transparent, white);
+  }
+}*/
+
+figcaption {
+  text-align: center;
+  margin: 0.5em 0;
+}
