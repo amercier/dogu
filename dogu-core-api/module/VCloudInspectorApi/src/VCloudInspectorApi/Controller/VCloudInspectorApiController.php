@@ -147,7 +147,10 @@ class VCloudInspectorApiController extends AbstractRestfulController
 
             $viewModel->status = 'success';
             $viewModel->message = 'Successfully retrieved item "' . $id . '"';
-            $viewModel->data = $object;
+            $viewModel->data = array(
+                'id' => $object['_id'],
+                'values' => $object['value'],
+            );
         }
         catch(\Exception $e) {
             $viewModel->status = 'error';

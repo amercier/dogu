@@ -156,6 +156,11 @@ class Module
     public function onFinish($e)
     {
         $response = $e->getResponse();
+        if ($e->getResult()->status === 'error') {
+            $response->setStatusCode(500);
+            $response->setReasonPhrase('Internal Server Error');
+        }
+
         $headers = $response->getHeaders();
         $contentType = $headers->get('Content-Type');
         if ($contentType) {
