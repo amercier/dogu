@@ -1,4 +1,4 @@
-<div class="app-loading" ng-if="loading">
+<div class="app-loading" ng-if="listLoading">
   <i class="app-loading-icon icon-loading"></i>
   <span class="app-loading-message">Loading...</span>
 </div>
@@ -12,18 +12,67 @@
   {{listError.description}}
 </div>
 
-<div class="row">
+<div class="row app-container" ng-if="types">
 
-  <div class="panel col-sm-3 col-md-3 col-lg-3" ng-if="objectTree">
-    <abn-tree
-      tree-data="objectTree"
-      icon-leaf="icon-file"
-      icon-expand="icon-plus-sign"
-      icon-contract="icon-minus-sign"
-      on-select="onObjectSelected(branch)"
-      expand-level="2"
-      initial-selection="Vegetable"
-    ></abn-tree>
+  <!-- Navigation -->
+  <nav class="app-container app-panel col-sm-6 col-md-4 col-lg-3">
+    <form class="app-container app-panel vi-sidenav" role="form">
+
+      <select
+          ng-options="t as t.name for t in types"
+          ng-model="selectedType"
+          ng-change="onSelectedTypeChange()"
+          ng-trim="true"
+          class="form-control vi-form-row">
+        <option value="">-- choose object type --</option>
+      </select>
+
+      <input
+        ng-model="objectFilter"
+        ng-model-onblur
+        ng-change="onFilterChange()"
+        ng-show="objects"
+        class="form-control vi-form-row"
+        type="text"
+        placeholder="filter..."
+      />
+
+      <ul class="nav nav-pills nav-stacked vi-sidenav-list" ng-show="objects">
+        <li ng-repeat="o in objects | filter:filterObject" ng-class="isObjectSelected(o) ? 'active' : ''">
+          <a href="#" ng-click="onObjectSelected(o)">{{o.name}}</a>
+        </li>
+      </ul>
+
+    </form>
+  </nav>
+
+  <!-- Object -->
+  <div class="app-container app-panel col-sm-6 col-md-6 col-lg-9">
+
+    <div ng-show="objectLoading" class="app-loading">
+      <i class="app-loading-icon icon-loading"></i>
+      <span class="app-loading-message">Loading...</span>
+    </div>
+
+    <div ng-show="object">
+      <h1>{{object.values.name.current}}</h1>
+      <p class="vi-object-title">
+        Object <span class="vi-object-info">{{object.id.object}}</span>
+        on <span class="vi-object-info">{{object.id.host}}</span>
+      </p>
+      <dl class="dl-horizontal">
+        <dt ng-repeat-start="(key, value) in object.values">{{key}}</dt>
+        <dd ng-repeat-end>
+          <ul class="list-unstyled">
+            <li ng-repeat="history in value.history">
+              <span class="vi-history-time">{{getDate(history.time)}}</span>
+              <span class="vi-history-value">{{history.value}}</span>
+            </li>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+
   </div>
 
 </div>
