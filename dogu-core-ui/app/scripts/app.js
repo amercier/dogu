@@ -5,8 +5,7 @@ angular.module('doguCoreUiApp', [
   'ngResource',
   'ngSanitize',
   'ngRoute',
-  'ngAnimate',
-  'angularBootstrapNavTree'
+  'ngAnimate'
 ])
 
   // Active link for Navigation
