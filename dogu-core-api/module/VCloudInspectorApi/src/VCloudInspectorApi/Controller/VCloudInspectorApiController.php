@@ -33,11 +33,17 @@ class VCloudInspectorApiController extends AbstractRestfulController
 
             $objects = array();
             $counts = array();
+            $hosts = array();
 
             foreach ($collection->find(array(), array("_id" => true, "value" => true)) as $object) {
 
+                $host = $object['_id']['host'];
+                if (!in_array($host, $hosts)) {
+                    array_push($hosts, $host);
+                }
+
                 $uuid = join('-', array(
-                    $object['_id']['host'],
+                    $host,
                     $object['_id']['queryType'],
                     $object['_id']['object'],
                 ));
@@ -60,6 +66,7 @@ class VCloudInspectorApiController extends AbstractRestfulController
             $viewModel->status = 'success';
             $viewModel->message = 'Successfully retrieved items';
             $viewModel->data = array(
+                'hosts' => $hosts,
                 'types' => array(
                     'adminVAppNetwork' => 'vApp Networks',
                     'vAppOrgNetworkRelation' => 'vApp Org Newtork Relations',

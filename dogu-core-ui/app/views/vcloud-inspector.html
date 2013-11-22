@@ -19,10 +19,17 @@
     <form class="app-container app-panel vi-sidenav" role="form">
 
       <select
-          ng-options="t as t.name for t in types"
+          ng-options="host for host in hosts"
+          ng-model="selectedHost"
+          ng-change="onSelectedHostChange()"
+          class="form-control vi-form-row">
+        <option value="">-- choose host --</option>
+      </select>
+
+      <select
+          ng-options="type as type.name for type in types"
           ng-model="selectedType"
           ng-change="onSelectedTypeChange()"
-          ng-trim="true"
           class="form-control vi-form-row">
         <option value="">-- choose object type --</option>
       </select>

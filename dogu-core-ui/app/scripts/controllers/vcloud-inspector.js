@@ -5,9 +5,7 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
   $scope.listLoading = true;
   $scope.listError = false;
 
-  $scope.objectTree = false;
-
-  var objectsByQueryType = {};
+  var allObjects = {};
 
   function getObjectComparator(fieldName, caseSensitive) {
     return function(type1, type2) {
@@ -25,9 +23,11 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
     };
   }
 
-  $scope.onSelectedTypeChange = function() {
-    $scope.objects = objectsByQueryType[ this.selectedType.id ];
+  $scope.updateObjects = function() {
+    $scope.objects = this.selectedType && allObjects[ this.selectedHost ][ this.selectedType.id ];
   };
+  $scope.onSelectedHostChange = $scope.updateObjects;
+  $scope.onSelectedTypeChange = $scope.updateObjects;
 
   $scope.objectFilter = '';
   var keywords = [];
@@ -37,7 +37,8 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
 
   $scope.filterObject = function(object) {
     return keywords.every(function (keyword) {
-      return object.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+      return object.host = $scope.selectedHost &&
+        object.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
     });
   };
 
@@ -73,22 +74,45 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
     .success(function(data/*, status, headers, config*/) {
       $scope.listLoading = false;
 
-      // Create a objectTreeObject which is an object of the form
-      // queryType => [object1, object2, ...]
-      jQuery.each(data.data.objects, function (objectId, object) {
-        if (!(object.queryType in objectsByQueryType)) {
-          objectsByQueryType[object.queryType] = [];
-        }
-        object.id = objectId;
-        objectsByQueryType[object.queryType].push(object);
-      });
+      // Create a allObjects which is an object of the form
+      //     {
+      //       <host>: {
+      //         <queryType> => [object1, object2, ...],
+      //         ...
+      //       },
+      //       ...
+      //     }
+      jQuery.each(data.data.hosts, function(hostId, host) {
+        jQuery.each(data.data.objects, function (objectId, object) {
 
-      // Sort object arrays of objectTreeObject
-      for (var i in objectsByQueryType) {
-        if (objectsByQueryType.hasOwnProperty(i)) {
-          objectsByQueryType[i] = objectsByQueryType[i].sort(getObjectComparator('name'));
+          // If necessary, create allObject.<host> = {}
+          if (!(object.host in allObjects)) {
+            allObjects[object.host] = {};
+          }
+
+          // If necessary, create allObjects.<host>.<queryType> = []
+          if (!(object.queryType in allObjects[object.host])) {
+            allObjects[object.host][object.queryType] = [];
+          }
+
+          // Save object
+          object.id = objectId;
+          allObjects[object.host][object.queryType].push(object);
+        });
+      });
+      // Sort object arrays of allObjects
+      for (var host in allObjects) {
+        if (allObjects.hasOwnProperty(host)) {
+          for(var queryType in allObjects[host]) {
+            if (allObjects[host].hasOwnProperty(queryType)) {
+              allObjects[host][queryType].sort(getObjectComparator('name'));
+            }
+          }
         }
       }
+
+      // Update $scope.hosts
+      $scope.hosts = data.data.hosts.sort();
 
       // Update $scope.types
       $scope.types = jQuery.map(data.data.types, function(name, id) {
@@ -97,6 +121,15 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
           name: name
         };
       }).sort(getObjectComparator('name'));
+
+      // Initialize default values
+      if ($scope.hosts.length) {
+        $scope.selectedHost = $scope.hosts[0];
+      }
+      if ($scope.types.length) {
+        $scope.selectedType = $scope.types[0];
+      }
+      $scope.updateObjects();
 
     })
     .error(function(data/*, status, headers, config*/) {
