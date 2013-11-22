@@ -73,7 +73,10 @@
           <ul class="list-unstyled">
             <li ng-repeat="history in value.history">
               <span class="vi-history-time">{{getDate(history.time)}}</span>
-              <span class="vi-history-value">{{history.value}}</span>
+              <span class="vi-history-value" ng-if="!isLink(history)">{{history.value}}</span>
+              <span class="vi-history-value" ng-if="isLink(history)">
+                <a ng-href="{{getLink(history.reference)}}" title="{{history.value}}">[{{history.reference.queryType}}] {{history.reference.name}}</a>
+              </span>
             </li>
           </dl>
         </dd>

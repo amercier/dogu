@@ -1,11 +1,12 @@
 'use strict';
 
-angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($scope, $http) {
+angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($scope, $http, $location) {
 
   $scope.listLoading = true;
   $scope.listError = false;
 
   var allObjects = {};
+  var objectsById = {};
 
   function getObjectComparator(fieldName, caseSensitive) {
     return function(type1, type2) {
@@ -55,6 +56,17 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
     $http({method: 'GET', url: 'http://dogu.local/vcloud-inspector/' + object.id})
       .success(function(data/*, status, headers, config*/) {
         $scope.objectLoading = false;
+
+        // Check for URL values, and set "reference" to the object
+        var matches;
+        jQuery.each(data.data.values, function(property, valueObject) {
+          jQuery.each(valueObject.history, function(historyRank, historyObject) {
+            if (typeof historyObject.value === 'string' && (matches = historyObject.value.match(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/))) {
+              historyObject.reference = objectsById[ matches[0] ];
+            }
+          });
+        });
+
         $scope.object = data.data;
       })
       .error(function(data/*, status, headers, config*/) {
@@ -69,6 +81,14 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
       ' ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
   };
 
+  $scope.isLink = function(history) {
+    return history.reference;
+  };
+
+  $scope.getLink = function(object) {
+    return '/vcloud-inspector/' + object.host + '/' + object.queryType + '/' + object.object;
+  };
+
   // Get all objects and update objects
   $http({method: 'GET', url: 'http://dogu.local/vcloud-inspector'})
     .success(function(data/*, status, headers, config*/) {
@@ -77,29 +97,34 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
       // Create a allObjects which is an object of the form
       //     {
       //       <host>: {
-      //         <queryType> => [object1, object2, ...],
+      //         <queryType>: {
+      //           <id>: object,
+      //           ...
+      //         ],
       //         ...
       //       },
       //       ...
       //     }
-      jQuery.each(data.data.hosts, function(hostId, host) {
-        jQuery.each(data.data.objects, function (objectId, object) {
+      jQuery.each(data.data.objects, function (objectId, object) {
 
-          // If necessary, create allObject.<host> = {}
-          if (!(object.host in allObjects)) {
-            allObjects[object.host] = {};
-          }
+        // Save object in objectsById
+        objectsById[ object.object ] = object;
 
-          // If necessary, create allObjects.<host>.<queryType> = []
-          if (!(object.queryType in allObjects[object.host])) {
-            allObjects[object.host][object.queryType] = [];
-          }
+        // If necessary, create allObject.<host> = {}
+        if (!(object.host in allObjects)) {
+          allObjects[object.host] = {};
+        }
 
-          // Save object
-          object.id = objectId;
-          allObjects[object.host][object.queryType].push(object);
-        });
+        // If necessary, create allObjects.<host>.<queryType> = []
+        if (!(object.queryType in allObjects[object.host])) {
+          allObjects[object.host][object.queryType] = [];
+        }
+
+        // Save object
+        object.id = objectId;
+        allObjects[object.host][object.queryType].push(object);
       });
+
       // Sort object arrays of allObjects
       for (var host in allObjects) {
         if (allObjects.hasOwnProperty(host)) {
