@@ -19,7 +19,7 @@
     <form class="app-container app-panel vi-sidenav" role="form">
 
       <select
-          ng-options="host for host in hosts"
+          ng-options="h for h in hosts"
           ng-model="selectedHost"
           ng-change="onSelectedHostChange()"
           class="form-control vi-form-row">
@@ -27,7 +27,7 @@
       </select>
 
       <select
-          ng-options="type as type.name for type in types"
+          ng-options="t as t.name for t in types"
           ng-model="selectedType"
           ng-change="onSelectedTypeChange()"
           class="form-control vi-form-row">
@@ -71,12 +71,12 @@
         <dt ng-repeat-start="(key, value) in object.values">{{key}}</dt>
         <dd ng-repeat-end>
           <ul class="list-unstyled">
-            <li ng-repeat="history in value.history">
-              <span class="vi-history-time">{{getDate(history.time)}}</span>
-              <span class="vi-history-value" ng-if="!isLink(history)">{{history.value}}</span>
-              <span class="vi-history-value" ng-if="isLink(history)">
-                <a ng-href="{{getLink(history.reference)}}" title="{{history.value}}">{{history.reference.name}}</a>
-                in {{getTypeName(history.reference.queryType)}}
+            <li ng-repeat="h in value.history">
+              <span class="vi-history-time">{{getDate(h.time)}}</span>
+              <span class="vi-history-value" ng-if="!isLink(h)">{{h.value}}</span>
+              <span class="vi-history-value" ng-if="isLink(h)">
+                <a ng-click="onReferenceClick(h.reference)" title="{{h.value}}" href="#">{{h.reference.name}}</a>
+                in {{getTypeName(h.reference.queryType)}}
               </span>
             </li>
           </dl>

@@ -76,6 +76,14 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
       });
   };
 
+  $scope.onReferenceClick = function(reference) {
+    $scope.selectedHost = reference.host;
+    $scope.selectedType = allTypes[reference.queryType];
+    $scope.selectedObject = reference;
+    $scope.updateObjects();
+    $scope.onObjectSelected(reference);
+  };
+
   $scope.getDate = function(time) {
     var d = new Date(1000 * +time);
     return d.getFullYear() + '-' + ('0'+d.getMonth()).slice(-2) + '-' + ('0'+d.getDate()).slice(-2) +
@@ -91,7 +99,7 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
   };
 
   $scope.getTypeName = function(type) {
-    return allTypes[type];
+    return allTypes[type].name;
   };
 
   // Get all objects and update objects
@@ -146,8 +154,7 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
 
       // Update $scope.types
       $scope.types = jQuery.map(data.data.types, function(name, id) {
-        allTypes[id] = name;
-        return {
+        return allTypes[id] = {
           id: id,
           name: name
         };
