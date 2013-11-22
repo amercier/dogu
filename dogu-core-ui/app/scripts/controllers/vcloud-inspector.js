@@ -5,6 +5,7 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
   $scope.listLoading = true;
   $scope.listError = false;
 
+  var allTypes = {};
   var allObjects = {};
   var objectsById = {};
 
@@ -89,6 +90,10 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
     return '/vcloud-inspector/' + object.host + '/' + object.queryType + '/' + object.object;
   };
 
+  $scope.getTypeName = function(type) {
+    return allTypes[type];
+  };
+
   // Get all objects and update objects
   $http({method: 'GET', url: 'http://dogu.local/vcloud-inspector'})
     .success(function(data/*, status, headers, config*/) {
@@ -141,6 +146,7 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
 
       // Update $scope.types
       $scope.types = jQuery.map(data.data.types, function(name, id) {
+        allTypes[id] = name;
         return {
           id: id,
           name: name
