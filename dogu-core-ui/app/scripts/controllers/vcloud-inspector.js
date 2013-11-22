@@ -64,7 +64,7 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
 
   $scope.getDate = function(time) {
     var d = new Date(1000 * +time);
-    return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() +
+    return d.getFullYear() + '-' + ('0'+d.getMonth()).slice(-2) + '-' + ('0'+d.getDate()).slice(-2) +
       ' ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
   };
 

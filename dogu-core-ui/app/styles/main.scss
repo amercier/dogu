@@ -75,40 +75,6 @@ body {
   font-weight: 700;
 }
 
-/*
-.application-title {
-  font-weight: 100;
-  font-size: 60px;
-}
-
-.application-nav {
-  width: 240px;
-  // top: 100px;
-}
-
-.application {
-  left: 260px;
-
-  &:before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 261px;
-    right: 20px;
-    height: 30px;
-    background: linear-gradient(white, transparent);
-  }
-
-  &:after {
-    content: '';
-    position: fixed;
-    bottom: 0;
-    left: 261px;
-    right: 20px;
-    height: 30px;
-    background: linear-gradient(transparent, white);
-  }
-}*/
 
 figcaption {
   text-align: center;
@@ -153,6 +119,10 @@ figcaption {
   color: #ccc;
   margin-right: 0.5em;
 }
+
+/**
+ * Animation
+ */
 
 .ng-enter {
   -webkit-transition: .3s;
