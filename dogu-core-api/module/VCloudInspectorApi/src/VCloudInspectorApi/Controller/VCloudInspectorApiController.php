@@ -24,8 +24,7 @@ class VCloudInspectorApiController extends AbstractRestfulController
         $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
 
         try {
-            // $hostname = 'mongo.local';
-            $hostname = '127.0.0.1';
+            $hostname = 'mongo.local';
 
             $mongoClient = new \MongoClient('mongodb://' . $hostname);
             $mongoDB = $mongoClient->selectDB('vCloudNG');
@@ -125,8 +124,8 @@ class VCloudInspectorApiController extends AbstractRestfulController
         $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
 
         try {
-            // $hostname = 'mongo.local';
-            $hostname = '127.0.0.1';
+            $hostname = 'mongo.local';
+            // $hostname = '127.0.0.1';
 
             $mongoClient = new \MongoClient('mongodb://' . $hostname);
             $mongoDB = $mongoClient->selectDB('vCloudNG');
