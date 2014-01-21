@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($scope, $http, $location) {
+angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($scope, $http/*, $location*/) {
 
   $scope.listLoading = true;
   $scope.listError = false;
@@ -39,7 +39,7 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
 
   $scope.filterObject = function(object) {
     return keywords.every(function (keyword) {
-      return object.host = $scope.selectedHost &&
+      return (object.host = $scope.selectedHost) &&
         object.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
     });
   };
@@ -154,10 +154,11 @@ angular.module('doguCoreUiApp').controller('VCloudInspectorCtrl', function ($sco
 
       // Update $scope.types
       $scope.types = jQuery.map(data.data.types, function(name, id) {
-        return allTypes[id] = {
+        allTypes[id] = {
           id: id,
           name: name
         };
+        return allTypes[id];
       }).sort(getObjectComparator('name'));
 
       // Initialize default values
